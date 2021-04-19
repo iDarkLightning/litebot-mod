@@ -4,6 +4,9 @@
   "package": "cf.litetech.litebotmod.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "ChatMixin",
+    "MinecraftServerMixin",
+    "PlayerManagerMixin"
   ],
   "client": [
   ],

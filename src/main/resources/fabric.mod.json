@@ -13,8 +13,8 @@
   "license": "MIT",
   "environment": "server",
   "entrypoints": {
-    "main": [
-      "cf.litetech.litebotmod.LitetechAdditions"
+    "server": [
+      "cf.litetech.litebotmod.LiteBotMod"
     ]
   },
   "mixins": [
