@@ -26,7 +26,7 @@ public abstract class MinecraftServerMixin {
     @Inject(at = @At("RETURN"), method = "save")
     public void connect(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         if (LiteBotMod.getConnection().isClosed()) {
-            LiteBotMod.getConnection().connect();
+            LiteBotMod.getConnection().reconnect();
         }
     }
 }

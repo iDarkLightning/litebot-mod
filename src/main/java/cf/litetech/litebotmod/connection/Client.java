@@ -1,6 +1,7 @@
 package cf.litetech.litebotmod.connection;
 
 import cf.litetech.litebotmod.LiteBotMod;
+import cf.litetech.litebotmod.commands.CommandRegisters;
 import com.google.gson.Gson;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -10,6 +11,7 @@ import java.net.URI;
 public class Client extends WebSocketClient {
     public Client(URI serverUri) {
         super(serverUri);
+
     }
 
     @Override
@@ -21,7 +23,17 @@ public class Client extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         ResponseData data = new Gson().fromJson(message, ResponseData.class);
-        LiteBotMod.getBridge().receiveMessage(data);
+        if (data.messageData != null) {
+            LiteBotMod.getBridge().receiveMessage(data.messageData);
+        } else if (data.commandData != null) {
+            CommandRegisters.setCommandData(data.commandData);
+        }
+    }
+
+    public void send(String message) {
+        if (this.isOpen()) {
+            super.send(message);
+        }
     }
 
     @Override

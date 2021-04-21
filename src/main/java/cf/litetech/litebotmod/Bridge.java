@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.world.GameRules;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -18,7 +19,7 @@ public class Bridge {
         LiteBotMod.getConnection().send(new Gson().toJson(req));
     }
 
-    public void receiveMessage(ResponseData res) {
+    public void receiveMessage(ResponseData.MessageResponse res) {
         Text message = Text.Serializer.fromJson(res.message);
 
 
@@ -55,6 +56,11 @@ public class Bridge {
             req = new RequestData(EventActions.EVENT, EventActions.Events.ON_MESSAGE, chatMessage, playerName);
         }
 
+        sendAction(req);
+    }
+
+    public void sendCommand(String commandName, String playerUUID, List<String> args) {
+        RequestData req = new RequestData(EventActions.COMMAND, commandName, args, playerUUID);
         sendAction(req);
     }
 }

@@ -6,13 +6,14 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class RequestData {
     private String auth;
     private  String player;
     private String name;
     private String sub;
-    private ArrayList<Object> args;
+    private List<?> args;
 
     RequestData(EventActions action) {
         this.auth = signToken(action.val);
@@ -24,10 +25,11 @@ public class RequestData {
         this.args = new ArrayList<>(Arrays.asList(args));
     }
 
-    public RequestData(EventActions action, String commandName, Object... args) {
+    public RequestData(EventActions action, String commandName, List<String> args, String playerUUID) {
         this.auth = signToken(action.val);
         this.name = commandName;
-        this.args = new ArrayList<>(Arrays.asList(args));
+        this.args = args;
+        this.player = playerUUID;
     }
 
     private String signToken(String action) {
