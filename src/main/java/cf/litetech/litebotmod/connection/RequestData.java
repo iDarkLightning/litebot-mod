@@ -12,7 +12,7 @@ public class RequestData {
     private String auth;
     private  String player;
     private String name;
-    private String sub;
+    private String arg;
     private List<?> args;
 
     RequestData(EventActions action) {
@@ -32,11 +32,18 @@ public class RequestData {
         this.player = playerUUID;
     }
 
-    private String signToken(String action) {
+    public RequestData(String commandName, String arg, List<String> args, String playerUUID) {
+        this.name = commandName;
+        this.arg = arg;
+        this.args = args;
+        this.player = playerUUID;
+    }
+
+    public static String signToken(String action) {
         try {
             Algorithm algorithm = Algorithm.HMAC256("rabbitsarecool");
             return JWT.create()
-                    .withClaim("server_name", "name")
+                    .withClaim("server_name", "smp")
                     .withClaim("action", action)
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

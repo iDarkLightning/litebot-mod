@@ -35,7 +35,7 @@ public abstract class ChatMixin {
         String playerName = this.player.getDisplayName().getString();
 
         if (!chatMessage.startsWith("/")) {
-            LiteBotMod.getBridge().sendMessage(playerName, chatMessage);
+            LiteBotMod.getBridge().sendMessage(playerName, chatMessage, this.player.getUuidAsString());
         }
     }
 
@@ -44,6 +44,6 @@ public abstract class ChatMixin {
         String message = (new TranslatableText("multiplayer.player.left", this.player.getDisplayName()))
                 .getString();
 
-        LiteBotMod.getBridge().sendMessage(null, message);
+        LiteBotMod.getBridge().sendMessage(null, message, this.player.getUuidAsString());
     }
 }

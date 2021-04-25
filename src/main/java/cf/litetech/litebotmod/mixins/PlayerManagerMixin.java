@@ -35,6 +35,6 @@ public abstract class PlayerManagerMixin {
             message = new TranslatableText("multiplayer.player.joined.renamed", new Object[]{player.getDisplayName(), string}).getString();
         }
 
-        LiteBotMod.getBridge().sendMessage(null, message);
+        LiteBotMod.getBridge().sendMessage(null, message, player.getUuidAsString());
     }
 }

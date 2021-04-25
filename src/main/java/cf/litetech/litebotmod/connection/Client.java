@@ -26,6 +26,7 @@ public class Client extends WebSocketClient {
         if (data.messageData != null) {
             LiteBotMod.getBridge().receiveMessage(data.messageData);
         } else if (data.commandData != null) {
+            System.out.println(message);
             CommandRegisters.setCommandData(data.commandData);
         }
     }

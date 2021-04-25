@@ -3,6 +3,7 @@ package cf.litetech.litebotmod.connection;
 public enum EventActions {
     AUTH("auth"),
     COMMAND("command"),
+    SUGGESTER("suggester"),
     EVENT("event");
 
     public String val;

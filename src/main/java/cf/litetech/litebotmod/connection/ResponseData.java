@@ -16,6 +16,7 @@ public class ResponseData {
     public class CommandResponse {
         public String name;
         public int OPLevel;
+        public boolean enabled;
         public ArrayList<CommandResponse> subs;
         public ArrayList<Argument> arguments;
 
@@ -35,5 +36,6 @@ public class ResponseData {
 
             return null;
         }
+
     }
 }

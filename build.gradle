@@ -3,6 +3,10 @@ plugins {
     id 'maven-publish'
 }
 
+repositories {
+    mavenCentral()
+}
+
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -16,8 +20,15 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modCompile("org.java-websocket:Java-WebSocket:1.5.1")
-    modCompile("com.auth0:java-jwt:3.13.0")
+    include "org.java-websocket:Java-WebSocket:1.5.1"
+    modImplementation "org.java-websocket:Java-WebSocket:1.5.1"
+    include 'com.auth0:java-jwt:3.13.0'
+    modImplementation 'com.auth0:java-jwt:3.13.0'
+    include group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+
+    include group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.1'
+    include group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.1'
+    include group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.1'
 }
 
 processResources {
@@ -70,5 +81,6 @@ publishing {
     repositories {
         // uncomment to publish to the local maven
         // mavenLocal()
+        mavenCentral()
     }
 }
