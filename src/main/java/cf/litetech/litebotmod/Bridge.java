@@ -19,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ import static cf.litetech.litebotmod.connection.RequestData.signToken;
 
 
 public class Bridge {
-    private final String FETCH_ROUTE = "http://localhost:8000/server/fetch";
+    private final String FETCH_ROUTE = "http://" + LiteBotMod.config.litebotAddress + "/server/fetch";
 
     public void receiveMessage(ResponseData.MessageResponse res) {
         Text message = Text.Serializer.fromJson(res.message);
@@ -73,8 +74,8 @@ public class Bridge {
         sendAction(req);
     }
 
-    public ArrayList<String> fetchSuggestions(String commandName, String playerUUID, String curArg, List<String> args) {
-        RequestData req = new RequestData(commandName, curArg, args, playerUUID);
+    public ArrayList<String> fetchSuggestions(String commandName, String playerUUID, String curArg, Collection<String> args) {
+        RequestData req = new RequestData(EventActions.SUGGESTER, commandName, curArg, args, playerUUID);
 
         String res;
         try {

@@ -1,11 +1,13 @@
 package cf.litetech.litebotmod.connection;
 
+import cf.litetech.litebotmod.LiteBotMod;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class RequestData {
@@ -13,7 +15,7 @@ public class RequestData {
     private  String player;
     private String name;
     private String arg;
-    private List<?> args;
+    private Collection<?> args;
 
     RequestData(EventActions action) {
         this.auth = signToken(action.val);
@@ -32,7 +34,8 @@ public class RequestData {
         this.player = playerUUID;
     }
 
-    public RequestData(String commandName, String arg, List<String> args, String playerUUID) {
+    public RequestData(EventActions action, String commandName, String arg, Collection<String> args, String playerUUID) {
+        this.auth = signToken(action.val);
         this.name = commandName;
         this.arg = arg;
         this.args = args;
@@ -41,9 +44,9 @@ public class RequestData {
 
     public static String signToken(String action) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256("rabbitsarecool");
+            Algorithm algorithm = Algorithm.HMAC256(LiteBotMod.config.secretKey);
             return JWT.create()
-                    .withClaim("server_name", "smp")
+                    .withClaim("server_name", LiteBotMod.config.serverName)
                     .withClaim("action", action)
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

@@ -14,7 +14,7 @@ public class ConfigFile {
 
     public static final Config DEFAULT_CONFIG = new Config();
 
-    private static final File FABRIC_CONFIG_DIR = FabricLoader.getInstance().getConfigDirectory();
+    private static final File FABRIC_CONFIG_DIR = FabricLoader.getInstance().getConfigDir().toFile();
     private static final Gson CONFIG_SERIALIZER = new GsonBuilder().setPrettyPrinting().create();
 
     private final File file;

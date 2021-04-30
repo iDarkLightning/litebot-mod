@@ -14,7 +14,7 @@ import java.util.Optional;
 public class LiteBotMod implements DedicatedServerModInitializer {
     private static Client connection;
     private static MinecraftServer server;
-    private final static Bridge bridge = new Bridge();
+    private static Bridge bridge;
 
     public static Logger LOGGER = LogManager.getLogger("LiteBot Mod");
     private static final ConfigFile configFile = new ConfigFile("litebot.json");
@@ -27,6 +27,8 @@ public class LiteBotMod implements DedicatedServerModInitializer {
             return;
         }
 
+        connection = new Client(URI.create("ws://" + config.litebotAddress + "/server/"));
+        bridge = new Bridge();
         connection.connect();
     }
 
