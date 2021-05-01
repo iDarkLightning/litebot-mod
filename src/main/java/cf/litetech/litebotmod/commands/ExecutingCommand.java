@@ -2,7 +2,6 @@ package cf.litetech.litebotmod.commands;
 
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.connection.ResponseData;
-import com.google.gson.JsonObject;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -13,11 +12,9 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +94,22 @@ public class ExecutingCommand {
     public List<String> fetchSuggestions(ResponseData.CommandResponse.Argument arg) throws CommandSyntaxException {
         return LiteBotMod.getBridge().fetchSuggestions(this.commandName, this.context.getSource().getPlayer().getUuidAsString(),
                 arg.name, this.serializedArguments.values());
+    }
+
+    public CommandContext<ServerCommandSource> getContext() {
+        return context;
+    }
+
+    public HashMap<String, Object> getArguments() {
+        return arguments;
+    }
+
+    public HashMap<String, String> getSerializedArguments() {
+        return serializedArguments;
+    }
+
+    public String getCommandName() {
+        return commandName;
     }
 
     private void processArguments() throws CommandSyntaxException {
