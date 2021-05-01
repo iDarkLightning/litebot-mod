@@ -11,6 +11,4 @@ public interface LiteBotExtension {
     default void onWebsocketError() {}
 
     void registerHooks();
-
-    static void register() {};
 }
