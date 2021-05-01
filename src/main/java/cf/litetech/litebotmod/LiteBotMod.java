@@ -7,8 +7,9 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class LiteBotMod implements DedicatedServerModInitializer {
@@ -16,6 +17,7 @@ public class LiteBotMod implements DedicatedServerModInitializer {
     private static MinecraftServer server;
     private static Bridge bridge;
     private static final ConfigFile configFile = new ConfigFile("litebot.json");
+    public static final List<Extension> EXTENSIONS = new ArrayList<>();
     public static Config config = ConfigFile.DEFAULT_CONFIG;
     public static Logger LOGGER = LogManager.getLogger("LiteBot-Mod");
 
@@ -30,6 +32,11 @@ public class LiteBotMod implements DedicatedServerModInitializer {
         connection = new Client(URI.create("ws://" + config.litebotAddress + "/server/"));
         bridge = new Bridge();
         connection.connect();
+    }
+
+    public static void addExtension(Extension extension) {
+        EXTENSIONS.add(extension);
+        extension.registerHooks();
     }
 
     public static void setServer(MinecraftServer server) {
@@ -47,7 +54,6 @@ public class LiteBotMod implements DedicatedServerModInitializer {
     public static Bridge getBridge() {
         return bridge;
     }
-
 
     public static boolean readConfig() {
         boolean result = true;

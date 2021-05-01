@@ -3,6 +3,7 @@ package cf.litetech.litebotmod.commands;
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.connection.ResponseData;
 import com.mojang.brigadier.CommandDispatcher;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -22,7 +23,6 @@ public class CommandRegisters {
                 REGISTERED_COMMANDS.put(command.name, INSTANCE);
             }
         }
-
         if (LiteBotMod.getServer() == null) return;
 
         for (ServerPlayerEntity player : LiteBotMod.getServer().getPlayerManager().getPlayerList()) {

@@ -1,5 +1,6 @@
 package cf.litetech.litebotmod.connection;
 
+import cf.litetech.litebotmod.Extension;
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.commands.CommandRegisters;
 import com.google.gson.Gson;
@@ -17,6 +18,8 @@ public class Client extends WebSocketClient {
     public void onOpen(ServerHandshake handShakeData) {
         RequestData data = new RequestData(EventActions.AUTH);
         send(new Gson().toJson(data));
+
+        LiteBotMod.EXTENSIONS.forEach(Extension::onWebsocketOpen);
     }
 
     @Override
@@ -27,6 +30,8 @@ public class Client extends WebSocketClient {
         } else if (data.commandData != null) {
             CommandRegisters.setCommandData(data.commandData);
         }
+
+        LiteBotMod.EXTENSIONS.forEach(e -> e.onWebsocketMessage(message));
     }
 
     public void send(String message) {
@@ -37,11 +42,13 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        System.out.println(reason);
+        LiteBotMod.LOGGER.error(reason);
+
+        LiteBotMod.EXTENSIONS.forEach(Extension::onWebsocketClose);
     }
 
     @Override
     public void onError(Exception ex) {
-
+        LiteBotMod.EXTENSIONS.forEach(Extension::onWebsocketError);
     }
 }
