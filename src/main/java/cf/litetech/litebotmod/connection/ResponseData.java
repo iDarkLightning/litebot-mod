@@ -6,25 +6,23 @@ import java.util.List;
 public class ResponseData {
     public MessageResponse messageData;
     public List<CommandResponse> commandData;
-    public String id;
+    public String afterInvoke;
 
-    public class MessageResponse {
+    public static class MessageResponse {
         public String message;
         public String player;
         public boolean opOnly;
     }
 
-    public class CommandResponse {
+    public static class CommandResponse {
         public String name;
         public int OPLevel;
-        public boolean enabled;
         public ArrayList<CommandResponse> subs;
         public ArrayList<Argument> arguments;
 
-        public class Argument {
+        public static class Argument {
             public String name;
             public String type;
-            public String[] suggestions;
             public boolean optional;
         }
 

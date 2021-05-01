@@ -1,8 +1,9 @@
 package cf.litetech.litebotmod.connection;
 
-import cf.litetech.litebotmod.Extension;
+import cf.litetech.litebotmod.LiteBotExtension;
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.commands.CommandRegisters;
+import cf.litetech.litebotmod.commands.ExecutingCommand;
 import com.google.gson.Gson;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -19,7 +20,7 @@ public class Client extends WebSocketClient {
         RequestData data = new RequestData(EventActions.AUTH);
         send(new Gson().toJson(data));
 
-        LiteBotMod.EXTENSIONS.forEach(Extension::onWebsocketOpen);
+        LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketOpen);
     }
 
     @Override
@@ -29,9 +30,11 @@ public class Client extends WebSocketClient {
             LiteBotMod.getBridge().receiveMessage(data.messageData);
         } else if (data.commandData != null) {
             CommandRegisters.setCommandData(data.commandData);
+        } else if (data.afterInvoke != null) {
+            ExecutingCommand.callAfterInvoke(data.afterInvoke);
         }
 
-        LiteBotMod.EXTENSIONS.forEach(e -> e.onWebsocketMessage(message));
+        LiteBotMod.getExtensions().forEach(e -> e.onWebsocketMessage(message));
     }
 
     public void send(String message) {
@@ -44,11 +47,11 @@ public class Client extends WebSocketClient {
     public void onClose(int code, String reason, boolean remote) {
         LiteBotMod.LOGGER.error(reason);
 
-        LiteBotMod.EXTENSIONS.forEach(Extension::onWebsocketClose);
+        LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketClose);
     }
 
     @Override
     public void onError(Exception ex) {
-        LiteBotMod.EXTENSIONS.forEach(Extension::onWebsocketError);
+        LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketError);
     }
 }

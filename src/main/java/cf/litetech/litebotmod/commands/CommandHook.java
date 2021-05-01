@@ -1,17 +1,20 @@
 package cf.litetech.litebotmod.commands;
 
-import net.minecraft.server.command.ServerCommandSource;
 
 import java.util.HashMap;
 
 public abstract class CommandHook {
     private static final HashMap<String, CommandHook> REGISTERED_HOOKS = new HashMap<>();
 
-    CommandHook(String name, CommandHook instance) {
-        REGISTERED_HOOKS.put(name, instance);
+    public void register(String name, CommandHook hook) {
+        REGISTERED_HOOKS.put(name, hook);
+    };
+
+    public static HashMap<String, CommandHook> getRegisteredHooks() {
+        return REGISTERED_HOOKS;
     }
 
-    public void beforeInvoke(ServerCommandSource source, Object[] args) {};
+    public void beforeInvoke(ExecutingCommand command) {};
 
-    public void afterInvoke(ServerCommandSource source, Object[] args) {};
+    public void afterInvoke(ExecutingCommand command) {};
 }

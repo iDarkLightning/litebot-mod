@@ -27,12 +27,14 @@ import java.util.stream.Collectors;
 public class ExecutingCommand {
     private static final SimpleCommandExceptionType INVALID_ARGUMENT = new SimpleCommandExceptionType(
             new LiteralText("This argument is not valid! You must choose an argument that has been suggested"));
+    public static final HashMap<String, ExecutingCommand> EXECUTING_COMMANDS = new HashMap<>();
     private final CommandContext<ServerCommandSource> context;
     private final ResponseData.CommandResponse command;
     private final List<String> argumentNames;
     private HashMap<String, Object> arguments;
     private HashMap<String, String> serializedArguments;
-    public final String commandName;
+    private final List<String> validatedArguments;
+    private final String commandName;
 
     ExecutingCommand(ResponseData.CommandResponse command, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         this.command = command;
@@ -47,15 +49,27 @@ public class ExecutingCommand {
                         map(CommandNode::getName).collect(Collectors.toList());
 
         this.processArguments();
+        this.validatedArguments = this.validateArguments();
     }
 
     public int resolve() throws CommandSyntaxException {
-        List<String> validatedArguments = this.validateArguments();
+        if (CommandHook.getRegisteredHooks().containsKey(this.commandName)) {
+            EXECUTING_COMMANDS.put(this.commandName, this);
+
+            CommandHook.getRegisteredHooks().get(this.commandName).beforeInvoke(this);
+        }
 
         LiteBotMod.getBridge().sendCommand(this.commandName,
-                context.getSource().getPlayer().getUuidAsString(), validatedArguments);
+                context.getSource().getPlayer().getUuidAsString(), this.validatedArguments);
 
         return 0;
+    }
+
+    public static void callAfterInvoke(String name) {
+        if (!EXECUTING_COMMANDS.containsKey(name) && !CommandHook.getRegisteredHooks().containsKey(name)) return;
+
+        CommandHook.getRegisteredHooks().get(name).afterInvoke(EXECUTING_COMMANDS.get(name));
+        EXECUTING_COMMANDS.remove(name);
     }
 
     public List<String> validateArguments() throws IllegalArgumentException, CommandSyntaxException {

@@ -17,7 +17,7 @@ public class LiteBotMod implements DedicatedServerModInitializer {
     private static MinecraftServer server;
     private static Bridge bridge;
     private static final ConfigFile configFile = new ConfigFile("litebot.json");
-    public static final List<Extension> EXTENSIONS = new ArrayList<>();
+    private static final List<LiteBotExtension> EXTENSIONS = new ArrayList<>();
     public static Config config = ConfigFile.DEFAULT_CONFIG;
     public static Logger LOGGER = LogManager.getLogger("LiteBot-Mod");
 
@@ -34,7 +34,7 @@ public class LiteBotMod implements DedicatedServerModInitializer {
         connection.connect();
     }
 
-    public static void addExtension(Extension extension) {
+    public static void addExtension(LiteBotExtension extension) {
         EXTENSIONS.add(extension);
         extension.registerHooks();
     }
@@ -53,6 +53,10 @@ public class LiteBotMod implements DedicatedServerModInitializer {
 
     public static Bridge getBridge() {
         return bridge;
+    }
+
+    public static List<LiteBotExtension> getExtensions() {
+        return EXTENSIONS;
     }
 
     public static boolean readConfig() {

@@ -1,6 +1,6 @@
 package cf.litetech.litebotmod;
 
-public interface Extension {
+public interface LiteBotExtension {
 
     default void onWebsocketOpen() {}
 
@@ -11,4 +11,6 @@ public interface Extension {
     default void onWebsocketError() {}
 
     void registerHooks();
+
+    void register();
 }
