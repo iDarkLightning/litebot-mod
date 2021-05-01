@@ -12,5 +12,5 @@ public interface LiteBotExtension {
 
     void registerHooks();
 
-    void register();
+    static void register() {};
 }
