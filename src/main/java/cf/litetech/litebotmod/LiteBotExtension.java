@@ -6,9 +6,9 @@ public interface LiteBotExtension {
 
     default void onWebsocketMessage(String message) {}
 
-    default void onWebsocketClose() {}
+    default void onWebsocketClose(int code, String reason, boolean remote) {}
 
-    default void onWebsocketError() {}
+    default void onWebsocketError(Exception ex) {}
 
     void registerHooks();
 }

@@ -47,11 +47,11 @@ public class Client extends WebSocketClient {
     public void onClose(int code, String reason, boolean remote) {
         LiteBotMod.LOGGER.error(reason);
 
-        LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketClose);
+        LiteBotMod.getExtensions().forEach(e -> e.onWebsocketClose(code, reason, remote));
     }
 
     @Override
     public void onError(Exception ex) {
-        LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketError);
+        LiteBotMod.getExtensions().forEach(e -> e.onWebsocketError(ex));
     }
 }
