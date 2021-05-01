@@ -15,10 +15,10 @@ public class LiteBotMod implements DedicatedServerModInitializer {
     private static Client connection;
     private static MinecraftServer server;
     private static Bridge bridge;
-
-    public static Logger LOGGER = LogManager.getLogger("LiteBot Mod");
     private static final ConfigFile configFile = new ConfigFile("litebot.json");
     public static Config config = ConfigFile.DEFAULT_CONFIG;
+    public static Logger LOGGER = LogManager.getLogger("LiteBot-Mod");
+
 
     @Override
     public void onInitializeServer() {

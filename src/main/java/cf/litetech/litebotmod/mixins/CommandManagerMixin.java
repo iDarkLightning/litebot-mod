@@ -20,5 +20,6 @@ public abstract class CommandManagerMixin {
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onRegister(CommandManager.RegistrationEnvironment arg, CallbackInfo ci) {
         CommandRegisters.register(this.dispatcher);
+        CommandRegisters.setDispatcher(this.dispatcher);
     }
 }
