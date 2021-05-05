@@ -12,6 +12,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
@@ -131,12 +132,15 @@ public class ExecutingCommand {
                     break;
                 case "IntegerArgument":
                     rawArguments.put(arg.name, IntegerArgumentType.getInteger(this.context, arg.name));
-                    rawArguments.put(arg.name, Integer.toString(IntegerArgumentType.getInteger(this.context, arg.name)));
+                    serializedArguments.put(arg.name, Integer.toString(IntegerArgumentType.getInteger(this.context, arg.name)));
                     break;
                 case "BooleanArgument":
                     rawArguments.put(arg.name, BoolArgumentType.getBool(this.context, arg.name));
-                    rawArguments.put(arg.name, Boolean.toString(BoolArgumentType.getBool(this.context, arg.name)));
+                    serializedArguments.put(arg.name, Boolean.toString(BoolArgumentType.getBool(this.context, arg.name)));
                     break;
+                case "PlayerArgument":
+                    rawArguments.put(arg.name, EntityArgumentType.getPlayer(this.context, arg.name));
+                    serializedArguments.put(arg.name, Serializers.serializePlayer(EntityArgumentType.getPlayer(this.context, arg.name)));
                 default:
                     throw new IllegalStateException("Unexpected value: " + arg.type);
             }
