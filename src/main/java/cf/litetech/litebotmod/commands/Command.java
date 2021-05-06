@@ -13,6 +13,8 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.DimensionArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -37,6 +39,8 @@ public class Command {
         ARGUMENT_TYPES.put("IntegerArgument", IntegerArgumentType.integer());
         ARGUMENT_TYPES.put("BooleanArgument", BoolArgumentType.bool());
         ARGUMENT_TYPES.put("PlayerArgument", EntityArgumentType.players());
+        ARGUMENT_TYPES.put("BlockPosArgument", BlockPosArgumentType.blockPos());
+        ARGUMENT_TYPES.put("DimensionArgument", DimensionArgumentType.dimension());
     }
 
     public static Command register(CommandDispatcher<ServerCommandSource> dispatcher, ResponseData.CommandResponse commandData) {
