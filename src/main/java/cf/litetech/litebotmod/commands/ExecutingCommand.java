@@ -12,6 +12,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.minecraft.command.argument.BlockPosArgumentType;
+import net.minecraft.command.argument.DimensionArgumentType;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -141,6 +143,14 @@ public class ExecutingCommand {
                 case "PlayerArgument":
                     rawArguments.put(arg.name, EntityArgumentType.getPlayer(this.context, arg.name));
                     serializedArguments.put(arg.name, Serializers.serializePlayer(EntityArgumentType.getPlayer(this.context, arg.name)));
+                    break;
+                case "BlockPosArgument":
+                    rawArguments.put(arg.name, BlockPosArgumentType.getBlockPos(this.context, arg.name));
+                    serializedArguments.put(arg.name, Serializers.serializeBlockPos(BlockPosArgumentType.getBlockPos(this.context, arg.name)));
+                    break;
+                case "DimensionArgument":
+                    rawArguments.put(arg.name, DimensionArgumentType.getDimensionArgument(this.context, arg.name));
+                    serializedArguments.put(arg.name, Serializers.serializeDimension(DimensionArgumentType.getDimensionArgument(this.context, arg.name)));
                 default:
                     throw new IllegalStateException("Unexpected value: " + arg.type);
             }
