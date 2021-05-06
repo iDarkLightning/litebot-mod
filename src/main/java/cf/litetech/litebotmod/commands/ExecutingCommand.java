@@ -60,7 +60,7 @@ public class ExecutingCommand {
         }
 
         LiteBotMod.getBridge().sendCommand(this.commandName,
-                context.getSource().getPlayer().getUuidAsString(), this.validatedArguments);
+                context.getSource().getPlayer(), this.validatedArguments);
 
         return 0;
     }
@@ -95,7 +95,7 @@ public class ExecutingCommand {
     }
 
     public List<String> fetchSuggestions(ResponseData.CommandResponse.Argument arg) throws CommandSyntaxException {
-        return LiteBotMod.getBridge().fetchSuggestions(this.commandName, this.context.getSource().getPlayer().getUuidAsString(),
+        return LiteBotMod.getBridge().fetchSuggestions(this.commandName, this.context.getSource().getPlayer(),
                 arg.name, this.serializedArguments.values());
     }
 
@@ -151,6 +151,7 @@ public class ExecutingCommand {
                 case "DimensionArgument":
                     rawArguments.put(arg.name, DimensionArgumentType.getDimensionArgument(this.context, arg.name));
                     serializedArguments.put(arg.name, Serializers.serializeDimension(DimensionArgumentType.getDimensionArgument(this.context, arg.name)));
+                    break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + arg.type);
             }

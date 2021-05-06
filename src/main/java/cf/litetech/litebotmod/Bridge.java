@@ -1,5 +1,6 @@
 package cf.litetech.litebotmod;
 
+import cf.litetech.litebotmod.commands.Serializers;
 import cf.litetech.litebotmod.connection.EventActions;
 import cf.litetech.litebotmod.connection.RequestData;
 import cf.litetech.litebotmod.connection.ResponseData;
@@ -69,13 +70,13 @@ public class Bridge {
         sendAction(req);
     }
 
-    public void sendCommand(String commandName, String playerUUID, List<String> args) {
-        RequestData req = new RequestData(EventActions.COMMAND, commandName, args, playerUUID);
+    public void sendCommand(String commandName, ServerPlayerEntity player, List<String> args) {
+        RequestData req = new RequestData(EventActions.COMMAND, commandName, args, Serializers.serializePlayer(player));
         sendAction(req);
     }
 
-    public ArrayList<String> fetchSuggestions(String commandName, String playerUUID, String curArg, Collection<String> args) {
-        RequestData req = new RequestData(EventActions.SUGGESTER, commandName, curArg, args, playerUUID);
+    public ArrayList<String> fetchSuggestions(String commandName, ServerPlayerEntity player, String curArg, Collection<String> args) {
+        RequestData req = new RequestData(EventActions.SUGGESTER, commandName, curArg, args, Serializers.serializePlayer(player));
 
         String res;
         try {
