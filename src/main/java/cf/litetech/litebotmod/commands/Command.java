@@ -58,14 +58,22 @@ public class Command {
         ));
 
         if (!command.arguments.isEmpty()) {
-            commandBuilder.then(buildArgs(command, commandBuilder, command.arguments.listIterator()));
+            RequiredArgumentBuilder<ServerCommandSource, ?> argBuilder =  buildArgs(command, commandBuilder, command.arguments.listIterator());
+
+            if (command.subs != null) {
+                for (ResponseData.CommandResponse sub : command.subs) {
+                    argBuilder.then(buildCommand(sub));
+                }
+            }
+
+            commandBuilder.then(argBuilder);
         } else {
             commandBuilder.executes(context -> executeCommand(command, context));
-        }
 
-        if (command.subs != null) {
-            for (ResponseData.CommandResponse sub : command.subs) {
-                commandBuilder.then(buildCommand(sub));
+            if (command.subs != null) {
+                for (ResponseData.CommandResponse sub : command.subs) {
+                    commandBuilder.then(buildCommand(sub));
+                }
             }
         }
 
