@@ -19,10 +19,9 @@ import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ExecutingCommand {
     private static final SimpleCommandExceptionType INVALID_ARGUMENT = new SimpleCommandExceptionType(
@@ -33,7 +32,7 @@ public class ExecutingCommand {
     private final List<String> argumentNames;
     private HashMap<String, Object> arguments;
     private HashMap<String, String> serializedArguments;
-    private final List<String> validatedArguments;
+    private final Map<String, String> validatedArguments;
     private final String commandName;
 
     ExecutingCommand(ResponseData.CommandResponse command, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -42,14 +41,15 @@ public class ExecutingCommand {
         this.commandName = context.getNodes()
                 .stream().filter(n -> n.getNode().getClass().equals(LiteralCommandNode.class))
                 .map(n -> n.getNode().getName()).collect(Collectors.joining("."));
-
         this.argumentNames = context.getNodes()
                 .stream().filter(n -> n.getNode().getClass().equals(ArgumentCommandNode.class))
                 .map(ParsedCommandNode::getNode).
                         map(CommandNode::getName).collect(Collectors.toList());
-
         this.processArguments();
-        this.validatedArguments = this.validateArguments();
+        List<String> validatedArguments = this.validateArguments();
+        Collections.reverse(validatedArguments);
+        this.validatedArguments = IntStream.range(0, this.argumentNames.size()).boxed().collect(Collectors.toMap(
+                this.argumentNames::get, validatedArguments::get));
     }
 
     public int resolve() throws CommandSyntaxException {
@@ -75,7 +75,8 @@ public class ExecutingCommand {
     public List<String> validateArguments() throws IllegalArgumentException, CommandSyntaxException {
         List<String> validatedArguments = new ArrayList<>();
         for (String argName : this.serializedArguments.keySet()) {
-            ResponseData.CommandResponse.Argument arg = command.getArgumentFromName(argName);
+            ResponseData.CommandResponse.Argument arg = this.command.getArgumentFromName(argName) != null ?
+                    this.command.getArgumentFromName(argName) : ResponseData.CommandResponse.getArgumentFromName(argName, this.commandName);
             String serializedArgument = this.serializedArguments.get(arg.name);
 
             if (!arg.type.equals("StrictSuggesterArgument")) {
@@ -96,7 +97,7 @@ public class ExecutingCommand {
 
     public List<String> fetchSuggestions(ResponseData.CommandResponse.Argument arg) throws CommandSyntaxException {
         return LiteBotMod.getBridge().fetchSuggestions(this.commandName, this.context.getSource().getPlayer(),
-                arg.name, this.serializedArguments.values());
+                arg.name, this.serializedArguments);
     }
 
     public CommandContext<ServerCommandSource> getContext() {
@@ -119,7 +120,8 @@ public class ExecutingCommand {
         HashMap<String, Object> rawArguments = new HashMap<>();
         HashMap<String, String> serializedArguments = new HashMap<>();
         for (String argName : this.argumentNames) {
-            ResponseData.CommandResponse.Argument arg = this.command.getArgumentFromName(argName);
+            ResponseData.CommandResponse.Argument arg = this.command.getArgumentFromName(argName) != null ?
+                    this.command.getArgumentFromName(argName) : ResponseData.CommandResponse.getArgumentFromName(argName, this.commandName);
 
             switch (arg.type) {
                 case "StringArgument":

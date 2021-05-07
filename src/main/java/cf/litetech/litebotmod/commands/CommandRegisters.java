@@ -44,4 +44,14 @@ public class CommandRegisters {
             register(dispatcher);
         }
     }
+
+    public static ResponseData.CommandResponse getCommandData(String name) {
+        for (ResponseData.CommandResponse command : commandData) {
+            if (command.name.equals(name)) {
+                return command;
+            }
+        }
+
+        return null;
+    }
 }

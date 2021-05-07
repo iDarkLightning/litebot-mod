@@ -19,10 +19,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static cf.litetech.litebotmod.connection.RequestData.signToken;
 
@@ -70,12 +67,12 @@ public class Bridge {
         sendAction(req);
     }
 
-    public void sendCommand(String commandName, ServerPlayerEntity player, List<String> args) {
+    public void sendCommand(String commandName, ServerPlayerEntity player, Map<String, String> args) {
         RequestData req = new RequestData(EventActions.COMMAND, commandName, args, Serializers.serializePlayer(player));
         sendAction(req);
     }
 
-    public ArrayList<String> fetchSuggestions(String commandName, ServerPlayerEntity player, String curArg, Collection<String> args) {
+    public ArrayList<String> fetchSuggestions(String commandName, ServerPlayerEntity player, String curArg, Map<String, String> args) {
         RequestData req = new RequestData(EventActions.SUGGESTER, commandName, curArg, args, Serializers.serializePlayer(player));
 
         String res;

@@ -1,5 +1,7 @@
 package cf.litetech.litebotmod.connection;
 
+import cf.litetech.litebotmod.commands.CommandRegisters;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,25 @@ public class ResponseData {
             public boolean optional;
         }
 
+        public static Argument getArgumentFromName(String name, String commandPath) {
+            String[] commandNames = commandPath.split("\\.");
+
+            for (String commandName : commandNames) {
+                CommandResponse command = CommandRegisters.getCommandData(commandName);
+                if (command == null) {
+                    continue;
+                }
+
+                for (Argument arg : command.arguments) {
+                    if (arg.name.equals(name)) {
+                        return arg;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public Argument getArgumentFromName(String name) {
             for (Argument arg : arguments) {
                 if (arg.name.equals(name)) {
@@ -35,6 +56,8 @@ public class ResponseData {
 
             return null;
         }
+
+
 
     }
 }
