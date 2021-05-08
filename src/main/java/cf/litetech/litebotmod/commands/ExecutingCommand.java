@@ -46,10 +46,7 @@ public class ExecutingCommand {
                 .map(ParsedCommandNode::getNode).
                         map(CommandNode::getName).collect(Collectors.toList());
         this.processArguments();
-        List<String> validatedArguments = this.validateArguments();
-        Collections.reverse(validatedArguments);
-        this.validatedArguments = IntStream.range(0, this.argumentNames.size()).boxed().collect(Collectors.toMap(
-                this.argumentNames::get, validatedArguments::get));
+        this.validatedArguments = this.validateArguments();
     }
 
     public int resolve() throws CommandSyntaxException {
@@ -73,15 +70,15 @@ public class ExecutingCommand {
         EXECUTING_COMMANDS.remove(name);
     }
 
-    public List<String> validateArguments() throws IllegalArgumentException, CommandSyntaxException {
-        List<String> validatedArguments = new ArrayList<>();
+    public HashMap<String, String> validateArguments() throws IllegalArgumentException, CommandSyntaxException {
+        HashMap<String, String> validatedArguments = new HashMap<>();
         for (String argName : this.serializedArguments.keySet()) {
             ResponseData.CommandResponse.Argument arg = this.command.getArgumentFromName(argName) != null ?
                     this.command.getArgumentFromName(argName) : ResponseData.CommandResponse.getArgumentFromName(argName, this.commandName);
             String serializedArgument = this.serializedArguments.get(arg.name);
 
             if (!arg.type.equals("StrictSuggesterArgument")) {
-                validatedArguments.add(serializedArgument);
+                validatedArguments.put(arg.name, serializedArgument);
                 continue;
             }
 
@@ -90,7 +87,7 @@ public class ExecutingCommand {
                 throw INVALID_ARGUMENT.create();
             }
 
-            validatedArguments.add(serializedArgument);
+            validatedArguments.put(arg.name, serializedArgument);
         }
 
         return validatedArguments;
