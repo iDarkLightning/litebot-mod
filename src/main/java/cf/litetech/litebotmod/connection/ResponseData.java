@@ -3,12 +3,14 @@ package cf.litetech.litebotmod.connection;
 import cf.litetech.litebotmod.commands.CommandRegisters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ResponseData {
     public MessageResponse messageData;
     public List<CommandResponse> commandData;
     public String afterInvoke;
+    public HashMap<String, Object> args;
 
     public static class MessageResponse {
         public String message;

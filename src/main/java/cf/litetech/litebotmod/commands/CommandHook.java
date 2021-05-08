@@ -17,4 +17,6 @@ public abstract class CommandHook {
     public void beforeInvoke(ExecutingCommand command) {};
 
     public void afterInvoke(ExecutingCommand command) {};
+
+    public void afterInvoke(ExecutingCommand command, HashMap<String, Object> args) {};
 }

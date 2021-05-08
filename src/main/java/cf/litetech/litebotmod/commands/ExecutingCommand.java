@@ -65,10 +65,11 @@ public class ExecutingCommand {
         return 0;
     }
 
-    public static void callAfterInvoke(String name) {
+    public static void callAfterInvoke(String name, HashMap<String, Object> args) {
         if (!EXECUTING_COMMANDS.containsKey(name) && !CommandHook.getRegisteredHooks().containsKey(name)) return;
 
         CommandHook.getRegisteredHooks().get(name).afterInvoke(EXECUTING_COMMANDS.get(name));
+        CommandHook.getRegisteredHooks().get(name).afterInvoke(EXECUTING_COMMANDS.get(name), args);
         EXECUTING_COMMANDS.remove(name);
     }
 

@@ -31,7 +31,7 @@ public class Client extends WebSocketClient {
         } else if (data.commandData != null) {
             CommandRegisters.setCommandData(data.commandData);
         } else if (data.afterInvoke != null) {
-            ExecutingCommand.callAfterInvoke(data.afterInvoke);
+            ExecutingCommand.callAfterInvoke(data.afterInvoke, data.args);
         }
 
         LiteBotMod.getExtensions().forEach(e -> e.onWebsocketMessage(message));
