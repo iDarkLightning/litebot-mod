@@ -53,8 +53,8 @@ public class Command {
     public LiteralArgumentBuilder<ServerCommandSource> buildCommand(ResponseData.CommandResponse command) {
         LiteralArgumentBuilder<ServerCommandSource> commandBuilder = CommandManager.literal(command.name);
         commandBuilder.requires(source -> (
-                LiteBotMod.getConnection().isOpen() && CommandRegisters.containsCommand(this.data) && command.OPLevel >= 0 &&
-                        source.hasPermissionLevel(command.OPLevel)
+                LiteBotMod.getConnection().isOpen() && CommandRegisters.containsCommand(this.data) &&
+                        source.hasPermissionLevel(CommandRegisters.getUpdatedData(this.data).OPLevel)
         ));
 
         if (!command.arguments.isEmpty()) {

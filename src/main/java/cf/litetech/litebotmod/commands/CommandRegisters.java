@@ -33,6 +33,10 @@ public class CommandRegisters {
         return commandData.stream().map(c -> c.name).collect(Collectors.toList()).contains(command.name);
     }
 
+    public static ResponseData.CommandResponse getUpdatedData(ResponseData.CommandResponse command) {
+        return commandData.stream().filter(c -> c.name.equals(command.name)).collect(Collectors.toList()).get(0);
+    }
+
     public static void setDispatcher(CommandDispatcher<ServerCommandSource> dispatcher) {
         CommandRegisters.dispatcher = dispatcher;
     }
