@@ -1,7 +1,8 @@
 package cf.litetech.litebotmod.commands;
 
 import cf.litetech.litebotmod.LiteBotMod;
-import cf.litetech.litebotmod.connection.ResponseData;
+import cf.litetech.litebotmod.connection.RequestBuilder;
+import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -21,21 +22,20 @@ import net.minecraft.text.LiteralText;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class ExecutingCommand {
     private static final SimpleCommandExceptionType INVALID_ARGUMENT = new SimpleCommandExceptionType(
             new LiteralText("This argument is not valid! You must choose an argument that has been suggested"));
     public static final HashMap<String, ExecutingCommand> EXECUTING_COMMANDS = new HashMap<>();
     private final CommandContext<ServerCommandSource> context;
-    private final ResponseData.CommandResponse command;
+    private final ServerCommandHandler.ServerCommandHandlerDeserializer command;
     private final List<String> argumentNames;
     private HashMap<String, Object> arguments;
     private HashMap<String, String> serializedArguments;
     private final Map<String, String> validatedArguments;
     private final String commandName;
 
-    ExecutingCommand(ResponseData.CommandResponse command, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+    ExecutingCommand(ServerCommandHandler.ServerCommandHandlerDeserializer command, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         this.command = command;
         this.context = context;
         this.commandName = context.getNodes()
@@ -73,8 +73,8 @@ public class ExecutingCommand {
     public HashMap<String, String> validateArguments() throws IllegalArgumentException, CommandSyntaxException {
         HashMap<String, String> validatedArguments = new HashMap<>();
         for (String argName : this.serializedArguments.keySet()) {
-            ResponseData.CommandResponse.Argument arg = this.command.getArgumentFromName(argName) != null ?
-                    this.command.getArgumentFromName(argName) : ResponseData.CommandResponse.getArgumentFromName(argName, this.commandName);
+            ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg = this.command.getArgumentFromName(argName) != null ?
+                    this.command.getArgumentFromName(argName) : ServerCommandHandler.ServerCommandHandlerDeserializer.getArgumentFromName(argName, this.commandName);
             String serializedArgument = this.serializedArguments.get(arg.name);
 
             if (!arg.type.equals("StrictSuggesterArgument")) {
@@ -93,9 +93,13 @@ public class ExecutingCommand {
         return validatedArguments;
     }
 
-    public List<String> fetchSuggestions(ResponseData.CommandResponse.Argument arg) throws CommandSyntaxException {
-        return LiteBotMod.getBridge().fetchSuggestions(this.commandName, this.context.getSource().getPlayer(),
-                arg.name, this.serializedArguments);
+    public List<String> fetchSuggestions(ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg) throws CommandSyntaxException {
+        return new RequestBuilder<ArrayList<String>>("suggester")
+                .setName(this.commandName)
+                .setPlayer(this.context.getSource().getPlayer())
+                .addArg("current_arg", arg.name)
+                .addArg("args", this.serializedArguments)
+                .makeRequest();
     }
 
     public CommandContext<ServerCommandSource> getContext() {
@@ -118,8 +122,8 @@ public class ExecutingCommand {
         HashMap<String, Object> rawArguments = new HashMap<>();
         HashMap<String, String> serializedArguments = new HashMap<>();
         for (String argName : this.argumentNames) {
-            ResponseData.CommandResponse.Argument arg = this.command.getArgumentFromName(argName) != null ?
-                    this.command.getArgumentFromName(argName) : ResponseData.CommandResponse.getArgumentFromName(argName, this.commandName);
+            ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg = this.command.getArgumentFromName(argName) != null ?
+                    this.command.getArgumentFromName(argName) : ServerCommandHandler.ServerCommandHandlerDeserializer.getArgumentFromName(argName, this.commandName);
 
             switch (arg.type) {
                 case "StringArgument":

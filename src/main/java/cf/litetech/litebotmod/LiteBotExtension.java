@@ -11,4 +11,6 @@ public interface LiteBotExtension {
     default void onWebsocketError(Exception ex) {}
 
     void registerHooks();
+
+    void registerRPC();
 }

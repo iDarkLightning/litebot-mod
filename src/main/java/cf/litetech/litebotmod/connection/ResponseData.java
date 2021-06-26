@@ -1,16 +1,22 @@
 package cf.litetech.litebotmod.connection;
 
 import cf.litetech.litebotmod.commands.CommandRegisters;
+import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ResponseData {
+    public String name;
+    public JsonObject data;
     public MessageResponse messageData;
     public List<CommandResponse> commandData;
     public String afterInvoke;
     public HashMap<String, Object> args;
+    public String id;
+    public ArrayList<String> res;
 
     public static class MessageResponse {
         public String message;
@@ -30,16 +36,16 @@ public class ResponseData {
             public boolean optional;
         }
 
-        public static Argument getArgumentFromName(String name, String commandPath) {
+        public static ServerCommandHandler.ServerCommandHandlerDeserializer.Argument getArgumentFromName(String name, String commandPath) {
             String[] commandNames = commandPath.split("\\.");
 
             for (String commandName : commandNames) {
-                CommandResponse command = CommandRegisters.getCommandData(commandName);
+                ServerCommandHandler.ServerCommandHandlerDeserializer command = CommandRegisters.getCommandData(commandName);
                 if (command == null) {
                     continue;
                 }
 
-                for (Argument arg : command.arguments) {
+                for (ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg : command.arguments) {
                     if (arg.name.equals(name)) {
                         return arg;
                     }

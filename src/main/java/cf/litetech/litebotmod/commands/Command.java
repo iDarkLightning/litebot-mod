@@ -2,6 +2,7 @@ package cf.litetech.litebotmod.commands;
 
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.connection.ResponseData;
+import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -25,9 +26,9 @@ import java.util.ListIterator;
 
 public class Command {
     private static final HashMap<String, ArgumentType<?>> ARGUMENT_TYPES = new HashMap<>();
-    public ResponseData.CommandResponse data;
+    public ServerCommandHandler.ServerCommandHandlerDeserializer data;
 
-    private Command(ResponseData.CommandResponse data) {
+    private Command(ServerCommandHandler.ServerCommandHandlerDeserializer data) {
         this.data = data;
     }
 
@@ -43,14 +44,14 @@ public class Command {
         ARGUMENT_TYPES.put("DimensionArgument", DimensionArgumentType.dimension());
     }
 
-    public static Command register(CommandDispatcher<ServerCommandSource> dispatcher, ResponseData.CommandResponse commandData) {
+    public static Command register(CommandDispatcher<ServerCommandSource> dispatcher, ServerCommandHandler.ServerCommandHandlerDeserializer commandData) {
         Command COMMAND = new Command(commandData);
         dispatcher.register(COMMAND.buildCommand(commandData));
 
         return COMMAND;
     }
 
-    public LiteralArgumentBuilder<ServerCommandSource> buildCommand(ResponseData.CommandResponse command) {
+    public LiteralArgumentBuilder<ServerCommandSource> buildCommand(ServerCommandHandler.ServerCommandHandlerDeserializer command) {
         LiteralArgumentBuilder<ServerCommandSource> commandBuilder = CommandManager.literal(command.name);
         commandBuilder.requires(source -> (
                 LiteBotMod.getConnection().isOpen() && CommandRegisters.containsCommand(this.data) &&
@@ -61,7 +62,7 @@ public class Command {
             RequiredArgumentBuilder<ServerCommandSource, ?> argBuilder =  buildArgs(command, commandBuilder, command.arguments.listIterator());
 
             if (command.subs != null) {
-                for (ResponseData.CommandResponse sub : command.subs) {
+                for (ServerCommandHandler.ServerCommandHandlerDeserializer sub : command.subs) {
                     argBuilder.then(buildCommand(sub));
                 }
             }
@@ -71,7 +72,7 @@ public class Command {
             commandBuilder.executes(context -> executeCommand(command, context));
 
             if (command.subs != null) {
-                for (ResponseData.CommandResponse sub : command.subs) {
+                for (ServerCommandHandler.ServerCommandHandlerDeserializer sub : command.subs) {
                     commandBuilder.then(buildCommand(sub));
                 }
             }
@@ -81,9 +82,9 @@ public class Command {
     }
 
     private RequiredArgumentBuilder<ServerCommandSource, ?> buildArgs(
-            ResponseData.CommandResponse command, ArgumentBuilder<ServerCommandSource, ?> argumentBuilder,
-            ListIterator<ResponseData.CommandResponse.Argument> argumentIterator) {
-        ResponseData.CommandResponse.Argument arg = argumentIterator.next();
+            ServerCommandHandler.ServerCommandHandlerDeserializer command, ArgumentBuilder<ServerCommandSource, ?> argumentBuilder,
+            ListIterator<ServerCommandHandler.ServerCommandHandlerDeserializer.Argument> argumentIterator) {
+        ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg = argumentIterator.next();
         RequiredArgumentBuilder<ServerCommandSource, ?> curBuilder = CommandManager.argument(arg.name,
                 ARGUMENT_TYPES.get(arg.type));
 
@@ -104,7 +105,7 @@ public class Command {
         return curBuilder;
     }
 
-    private int executeCommand(ResponseData.CommandResponse command, CommandContext<ServerCommandSource> context)
+    private int executeCommand(ServerCommandHandler.ServerCommandHandlerDeserializer command, CommandContext<ServerCommandSource> context)
             throws CommandSyntaxException {
         ExecutingCommand execCommand = new ExecutingCommand(command, context);
         return execCommand.resolve();

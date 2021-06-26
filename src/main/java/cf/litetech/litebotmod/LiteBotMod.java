@@ -3,6 +3,9 @@ package cf.litetech.litebotmod;
 import cf.litetech.litebotmod.config.Config;
 import cf.litetech.litebotmod.config.ConfigFile;
 import cf.litetech.litebotmod.connection.Client;
+import cf.litetech.litebotmod.connection.rpc.AfterInvokeHandler;
+import cf.litetech.litebotmod.connection.rpc.MessageHandler;
+import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +24,6 @@ public class LiteBotMod implements DedicatedServerModInitializer {
     public static Config config = ConfigFile.DEFAULT_CONFIG;
     public static Logger LOGGER = LogManager.getLogger("LiteBot-Mod");
 
-
     @Override
     public void onInitializeServer() {
         if (!readConfig()) {
@@ -32,11 +34,19 @@ public class LiteBotMod implements DedicatedServerModInitializer {
         connection = new Client(URI.create("ws://" + config.litebotAddress + "/server/"));
         bridge = new Bridge();
         connection.connect();
+        this.registerRPC();
     }
 
     public static void addExtension(LiteBotExtension extension) {
         EXTENSIONS.add(extension);
         extension.registerHooks();
+        extension.registerRPC();
+    }
+
+    public void registerRPC() {
+        new MessageHandler("message", MessageHandler.MessageHandlerDeserializer.class);
+        new ServerCommandHandler("server_command_registers", ServerCommandHandler.ServerCommandHandlerDeserializer[].class);
+        new AfterInvokeHandler("server_command_after_invoke", AfterInvokeHandler.AfterInvokeHandlerDeserializer.class);
     }
 
     public static void setServer(MinecraftServer server) {

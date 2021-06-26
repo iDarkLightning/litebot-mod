@@ -2,18 +2,22 @@ package cf.litetech.litebotmod.connection;
 
 import cf.litetech.litebotmod.LiteBotExtension;
 import cf.litetech.litebotmod.LiteBotMod;
-import cf.litetech.litebotmod.commands.CommandRegisters;
-import cf.litetech.litebotmod.commands.ExecutingCommand;
+import cf.litetech.litebotmod.connection.rpc.RPCHandler;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.function.Function;
 
 public class Client extends WebSocketClient {
     public Client(URI serverUri) {
         super(serverUri);
     }
+    public HashMap<String, Function<String, ? extends Class<Void>>> ongoingCallbacks = new HashMap<>();
 
     @Override
     public void onOpen(ServerHandshake handShakeData) {
@@ -25,13 +29,15 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        ResponseData data = new Gson().fromJson(message, ResponseData.class);
-        if (data.messageData != null) {
-            LiteBotMod.getBridge().receiveMessage(data.messageData);
-        } else if (data.commandData != null) {
-            CommandRegisters.setCommandData(data.commandData);
-        } else if (data.afterInvoke != null) {
-            ExecutingCommand.callAfterInvoke(data.afterInvoke, data.args);
+        JsonObject data = new JsonParser().parse(message).getAsJsonObject();
+        if (data.get("name") != null && RPCHandler.getRegisteredHandlers().containsKey(data.get("name").getAsString())) {
+            RPCHandler.getRegisteredHandlers()
+                    .get(data.get("name").getAsString())
+                    .handle(RPCHandler.getRegisteredHandlers()
+                            .get(data.get("name").getAsString())
+                            .deserializeArgs(data.get("data")));
+        } else if (data.get("id") != null && ongoingCallbacks.containsKey(data.get("id").getAsString())) {
+            ongoingCallbacks.get(data.get("id").getAsString()).apply(data.get("res").toString());
         }
 
         LiteBotMod.getExtensions().forEach(e -> e.onWebsocketMessage(message));
