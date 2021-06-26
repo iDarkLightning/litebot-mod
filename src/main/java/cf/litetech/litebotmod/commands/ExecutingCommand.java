@@ -1,6 +1,7 @@
 package cf.litetech.litebotmod.commands;
 
 import cf.litetech.litebotmod.LiteBotMod;
+import cf.litetech.litebotmod.connection.EventBuilder;
 import cf.litetech.litebotmod.connection.RequestBuilder;
 import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -32,7 +33,7 @@ public class ExecutingCommand {
     private final List<String> argumentNames;
     private HashMap<String, Object> arguments;
     private HashMap<String, String> serializedArguments;
-    private final Map<String, String> validatedArguments;
+    private final HashMap<String, String> validatedArguments;
     private final String commandName;
 
     ExecutingCommand(ServerCommandHandler.ServerCommandHandlerDeserializer command, CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -56,10 +57,11 @@ public class ExecutingCommand {
             CommandHook.getRegisteredHooks().get(this.commandName).beforeInvoke(this);
         }
 
-        LiteBotMod.getBridge().sendCommand(this.commandName,
-                context.getSource().getPlayer(), this.validatedArguments);
-
-        return 0;
+        return new EventBuilder(EventBuilder.Events.COMMAND)
+                .setName(this.commandName)
+                .setPlayer(this.context.getSource().getPlayer())
+                .setArgs(new HashMap<>(this.validatedArguments))
+                .dispatchEvent();
     }
 
     public static void callAfterInvoke(String name, HashMap<String, Object> args) {

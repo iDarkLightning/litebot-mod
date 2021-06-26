@@ -21,9 +21,7 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handShakeData) {
-        RequestData data = new RequestData(EventActions.AUTH);
-        send(new Gson().toJson(data));
-
+        new EventBuilder(EventBuilder.Events.AUTH).dispatchEvent();
         LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketOpen);
     }
 
@@ -38,6 +36,7 @@ public class Client extends WebSocketClient {
                             .deserializeArgs(data.get("data")));
         } else if (data.get("id") != null && ongoingCallbacks.containsKey(data.get("id").getAsString())) {
             ongoingCallbacks.get(data.get("id").getAsString()).apply(data.get("res").toString());
+            ongoingCallbacks.remove(data.get("id").getAsString());
         }
 
         LiteBotMod.getExtensions().forEach(e -> e.onWebsocketMessage(message));
@@ -58,6 +57,7 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
+        ex.printStackTrace();
         LiteBotMod.getExtensions().forEach(e -> e.onWebsocketError(ex));
     }
 }

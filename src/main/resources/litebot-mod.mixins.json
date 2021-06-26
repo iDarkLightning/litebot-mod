@@ -7,7 +7,9 @@
     "ChatMixin",
     "CommandManagerMixin",
     "MinecraftServerMixin",
-    "PlayerManagerMixin"
+    "PlayerManagerMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayerInteractionManagerMixin"
   ],
   "client": [
   ],

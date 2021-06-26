@@ -32,10 +32,9 @@ public abstract class ChatMixin {
     @Inject(method = "onGameMessage", at = @At(value = "RETURN", target = "net/minecraft/network/NetworkThreadUtils.forceMainThread(Lnet/minecraft/network/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/server/world/ServerWorld;)V"), cancellable = true)
     public void onChatMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
         String chatMessage = StringUtils.normalizeSpace(packet.getChatMessage());
-        String playerName = this.player.getDisplayName().getString();
 
         if (!chatMessage.startsWith("/")) {
-            LiteBotMod.getBridge().sendMessage(playerName, chatMessage, this.player.getUuidAsString());
+            LiteBotMod.getDispatcher().onMessage(this.player, chatMessage);
         }
     }
 
@@ -44,6 +43,7 @@ public abstract class ChatMixin {
         String message = (new TranslatableText("multiplayer.player.left", this.player.getDisplayName()))
                 .getString();
 
-        LiteBotMod.getBridge().sendMessage(null, message, this.player.getUuidAsString());
+        LiteBotMod.getDispatcher().onMessage(this.player, message);
+        LiteBotMod.getDispatcher().onPlayerLeave(this.player);
     }
 }

@@ -3,6 +3,7 @@ package cf.litetech.litebotmod;
 import cf.litetech.litebotmod.config.Config;
 import cf.litetech.litebotmod.config.ConfigFile;
 import cf.litetech.litebotmod.connection.Client;
+import cf.litetech.litebotmod.connection.EventsDispatcher;
 import cf.litetech.litebotmod.connection.rpc.AfterInvokeHandler;
 import cf.litetech.litebotmod.connection.rpc.MessageHandler;
 import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
@@ -21,6 +22,7 @@ public class LiteBotMod implements DedicatedServerModInitializer {
     private static Bridge bridge;
     private static final ConfigFile configFile = new ConfigFile("litebot.json");
     private static final List<LiteBotExtension> EXTENSIONS = new ArrayList<>();
+    private static final EventsDispatcher dispatcher = new EventsDispatcher();
     public static Config config = ConfigFile.DEFAULT_CONFIG;
     public static Logger LOGGER = LogManager.getLogger("LiteBot-Mod");
 
@@ -63,6 +65,10 @@ public class LiteBotMod implements DedicatedServerModInitializer {
 
     public static Bridge getBridge() {
         return bridge;
+    }
+
+    public static EventsDispatcher getDispatcher() {
+        return dispatcher;
     }
 
     public static List<LiteBotExtension> getExtensions() {

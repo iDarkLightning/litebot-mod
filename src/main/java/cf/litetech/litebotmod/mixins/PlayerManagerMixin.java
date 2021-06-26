@@ -1,6 +1,7 @@
 package cf.litetech.litebotmod.mixins;
 
 import cf.litetech.litebotmod.LiteBotMod;
+import cf.litetech.litebotmod.connection.EventsDispatcher;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.MinecraftServer;
@@ -35,6 +36,7 @@ public abstract class PlayerManagerMixin {
             message = new TranslatableText("multiplayer.player.joined.renamed", new Object[]{player.getDisplayName(), string}).getString();
         }
 
-        LiteBotMod.getBridge().sendMessage(null, message, player.getUuidAsString());
+        LiteBotMod.getDispatcher().onMessage(player, message);
+        LiteBotMod.getDispatcher().onPlayerJoin(player);
     }
 }

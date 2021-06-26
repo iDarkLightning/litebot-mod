@@ -2,18 +2,10 @@ package cf.litetech.litebotmod.connection;
 
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.commands.Serializers;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -21,15 +13,16 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import static cf.litetech.litebotmod.connection.Util.signToken;
+
 public class RequestBuilder<T> {
-    public String auth;
+    private String auth;
     private String name;
     private String player;
     private HashMap<String, Object> args = new HashMap<>();
-    public String built;
 
     public RequestBuilder(String action) {
-        this.auth = this.signToken(action);
+        this.auth = signToken(action);
     }
 
     public RequestBuilder<T> setName(String name) {
@@ -74,15 +67,4 @@ public class RequestBuilder<T> {
         return result.get();
     }
 
-    private String signToken(String action) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(LiteBotMod.config.secretKey);
-            return JWT.create()
-                    .withClaim("server_name", LiteBotMod.config.serverName)
-                    .withClaim("action", action)
-                    .sign(algorithm);
-        } catch (JWTCreationException exception) {
-            return "";
-        }
-    }
 }
