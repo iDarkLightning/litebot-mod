@@ -1,7 +1,6 @@
 package cf.litetech.litebotmod.commands;
 
 import cf.litetech.litebotmod.LiteBotMod;
-import cf.litetech.litebotmod.connection.ResponseData;
 import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;

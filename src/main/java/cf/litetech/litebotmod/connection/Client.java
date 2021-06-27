@@ -3,9 +3,15 @@ package cf.litetech.litebotmod.connection;
 import cf.litetech.litebotmod.LiteBotExtension;
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.connection.rpc.RPCHandler;
+import cf.litetech.litebotmod.network.LiteBotClient;
+import cf.litetech.litebotmod.network.ServerNetworkHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -22,6 +28,10 @@ public class Client extends WebSocketClient {
     @Override
     public void onOpen(ServerHandshake handShakeData) {
         new EventBuilder(EventBuilder.Events.AUTH).dispatchEvent();
+        for (ServerPlayerEntity player : ServerNetworkHandler.validPlayers) {
+            player.networkHandler.sendPacket(new CustomPayloadS2CPacket(LiteBotClient.LITEBOT_CHANNEL,
+                    new PacketByteBuf(Unpooled.buffer()).writeVarInt(LiteBotClient.LITEBOT_CONNECT).writeVarLong(1)));
+        }
         LiteBotMod.getExtensions().forEach(LiteBotExtension::onWebsocketOpen);
     }
 
@@ -51,13 +61,16 @@ public class Client extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         LiteBotMod.LOGGER.error(reason);
+        for (ServerPlayerEntity player : ServerNetworkHandler.validPlayers) {
+            player.networkHandler.sendPacket(new CustomPayloadS2CPacket(LiteBotClient.LITEBOT_CHANNEL,
+                    new PacketByteBuf(Unpooled.buffer()).writeVarInt(LiteBotClient.LITEBOT_CONNECT).writeVarLong(0)));
+        }
 
         LiteBotMod.getExtensions().forEach(e -> e.onWebsocketClose(code, reason, remote));
     }
 
     @Override
     public void onError(Exception ex) {
-        ex.printStackTrace();
         LiteBotMod.getExtensions().forEach(e -> e.onWebsocketError(ex));
     }
 }

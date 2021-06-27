@@ -3,17 +3,22 @@
   "minVersion": "0.8",
   "package": "cf.litetech.litebotmod.mixins",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "ChatMixin",
+  "server": [
+    "events.ChatMixin",
     "CommandManagerMixin",
     "MinecraftServerMixin",
-    "PlayerManagerMixin",
-    "ServerPlayerEntityMixin",
-    "ServerPlayerInteractionManagerMixin"
+    "events.PlayerManagerMixin",
+    "events.ServerPlayerEntityMixin",
+    "events.ServerPlayerInteractionManagerMixin",
+    "networking.CustomPayloadC2SPacketMixin",
+    "networking.ServerNetworkHandlerMixin"
   ],
   "client": [
+    "networking.ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+  ]
 }

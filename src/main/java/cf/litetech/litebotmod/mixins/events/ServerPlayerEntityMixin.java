@@ -1,4 +1,4 @@
-package cf.litetech.litebotmod.mixins;
+package cf.litetech.litebotmod.mixins.events;
 
 import cf.litetech.litebotmod.LiteBotMod;
 import com.mojang.authlib.GameProfile;

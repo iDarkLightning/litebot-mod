@@ -1,13 +1,18 @@
-package cf.litetech.litebotmod.mixins;
+package cf.litetech.litebotmod.mixins.events;
 
 import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.connection.EventsDispatcher;
+import cf.litetech.litebotmod.network.ServerNetworkHandler;
 import com.mojang.authlib.GameProfile;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.UserCache;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,5 +43,6 @@ public abstract class PlayerManagerMixin {
 
         LiteBotMod.getDispatcher().onMessage(player, message);
         LiteBotMod.getDispatcher().onPlayerJoin(player);
+        ServerNetworkHandler.onPlayerJoin(player);
     }
 }

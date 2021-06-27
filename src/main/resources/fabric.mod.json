@@ -11,10 +11,13 @@
     "repo": "https://github.com/iDarkLightning/litebot-mod.git"
   },
   "license": "MIT",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "server": [
       "cf.litetech.litebotmod.LiteBotMod"
+    ],
+    "client": [
+      "cf.litetech.litebotmod.LiteBotModClient"
     ]
   },
   "mixins": [
