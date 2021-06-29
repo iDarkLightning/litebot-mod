@@ -1,6 +1,7 @@
 package cf.litetech.litebotmod.commands;
 
 import cf.litetech.litebotmod.LiteBotMod;
+import cf.litetech.litebotmod.connection.RequestBuilder;
 import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -12,6 +13,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.DimensionArgumentType;
@@ -20,8 +22,10 @@ import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 public class Command {
     private static final HashMap<String, ArgumentType<?>> ARGUMENT_TYPES = new HashMap<>();
@@ -91,9 +95,12 @@ public class Command {
             argumentBuilder.executes(context -> executeCommand(command, context));
         }
 
+        ArrayList<String> thing = new ArrayList<>();
+        thing.add("hi");
+        thing.add("bye");
+
         if (arg.type.contains("SuggesterArgument")) {
-            curBuilder.suggests((context, builder) -> CommandSource.suggestMatching(
-                    new ExecutingCommand(command, context).fetchSuggestions(arg), builder));
+            curBuilder.suggests((context, builder) -> CommandSource.suggestMatching(getSuggestions(context, arg.name), builder));
         }
         if (argumentIterator.hasNext()) {
             curBuilder.then(buildArgs(command, curBuilder, argumentIterator));
@@ -102,6 +109,17 @@ public class Command {
         }
 
         return curBuilder;
+    }
+
+    public static ArrayList<String> getSuggestions(CommandContext<ServerCommandSource> context, String argName) throws CommandSyntaxException {
+        return new RequestBuilder<ArrayList<String>>("rpc")
+                .setName("suggester")
+                .setPlayer(context.getSource().getPlayer())
+                .addArg("command_name", context.getNodes()
+                        .stream().filter(n -> n.getNode().getClass().equals(LiteralCommandNode.class))
+                        .map(n -> n.getNode().getName()).collect(Collectors.joining(".")))
+                .addArg("arg_name", argName)
+                .makeRequest();
     }
 
     private int executeCommand(ServerCommandHandler.ServerCommandHandlerDeserializer command, CommandContext<ServerCommandSource> context)

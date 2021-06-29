@@ -1,6 +1,5 @@
 package cf.litetech.litebotmod.commands;
 
-import cf.litetech.litebotmod.LiteBotMod;
 import cf.litetech.litebotmod.connection.EventBuilder;
 import cf.litetech.litebotmod.connection.RequestBuilder;
 import cf.litetech.litebotmod.connection.rpc.ServerCommandHandler;
@@ -77,6 +76,8 @@ public class ExecutingCommand {
         for (String argName : this.serializedArguments.keySet()) {
             ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg = this.command.getArgumentFromName(argName) != null ?
                     this.command.getArgumentFromName(argName) : ServerCommandHandler.ServerCommandHandlerDeserializer.getArgumentFromName(argName, this.commandName);
+
+            assert arg != null;
             String serializedArgument = this.serializedArguments.get(arg.name);
 
             if (!arg.type.equals("StrictSuggesterArgument")) {
@@ -84,7 +85,7 @@ public class ExecutingCommand {
                 continue;
             }
 
-            List<String> suggestions = this.fetchSuggestions(arg);
+            List<String> suggestions = Command.getSuggestions(this.context, arg.name);
             if (!suggestions.contains(serializedArgument)) {
                 throw INVALID_ARGUMENT.create();
             }
@@ -95,14 +96,6 @@ public class ExecutingCommand {
         return validatedArguments;
     }
 
-    public List<String> fetchSuggestions(ServerCommandHandler.ServerCommandHandlerDeserializer.Argument arg) throws CommandSyntaxException {
-        return new RequestBuilder<ArrayList<String>>("suggester")
-                .setName(this.commandName)
-                .setPlayer(this.context.getSource().getPlayer())
-                .addArg("current_arg", arg.name)
-                .addArg("args", this.serializedArguments)
-                .makeRequest();
-    }
 
     public CommandContext<ServerCommandSource> getContext() {
         return context;
