@@ -1,6 +1,7 @@
 package cf.litetech.litebotmod.network;
 
 
+import cf.litetech.litebotmod.LiteBotMod;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.netty.buffer.Unpooled;
@@ -32,7 +33,10 @@ public class ClientNetworkHandler {
     private static void onHi(PacketByteBuf packet) {
         LiteBotClient.setLitebotServer();
         LiteBotClient.setLitebotConnected(packet.readVarLong() == 1);
-        if (LiteBotClient.getClientPlayer() != null) respondHello();
+        if (LiteBotClient.getClientPlayer() != null) {
+            respondHello();
+            LiteBotMod.LOGGER.info(LiteBotClient.getClientPlayer().getDisplayName().getString() + " joined a litebot server!");
+        }
     }
 
     private static void onLiteBotConnect(PacketByteBuf packet) {
