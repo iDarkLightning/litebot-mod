@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
+
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
     @Shadow
@@ -32,8 +34,8 @@ public abstract class PlayerManagerMixin {
         String message;
         GameProfile gameProfile = player.getGameProfile();
         UserCache userCache = this.server.getUserCache();
-        GameProfile gameProfile2 = userCache.getByUuid(gameProfile.getId());
-        String string = gameProfile2 == null ? gameProfile.getName() : gameProfile2.getName();
+        Optional<GameProfile> gameProfile2 = userCache.getByUuid(gameProfile.getId());
+        String string = gameProfile2.get() == null ? gameProfile.getName() : gameProfile2.get().getName();
 
         if (player.getGameProfile().getName().equalsIgnoreCase(string)) {
             message = new TranslatableText("multiplayer.player.joined", new Object[]{player.getDisplayName()}).getString();
